@@ -54,6 +54,7 @@ Module.symvers
 /Module.markers
 /out
 /release
+/olive_anykernel
 
 #
 # Debian directory (make deb-pkg)

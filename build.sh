@@ -17,6 +17,11 @@ VENDOR_MODULEDIR=$AK3_DIR/modules/vendor/lib/modules
 CONFIG=lolz_olive_defconfig
 PATH="${HOME}/clang/bin:${HOME}/gcc4/bin:${PATH}"
 
+# Download our Anykernel for olive
+rm -rf $AK3_DIR
+git clone https://github.com/Jprimero15/olive_anykernel -b master $AK3_DIR
+rm -rf $AK3_DIR/.git
+
 # Build start
 make O=$OUTDIR ARCH=arm64 $CONFIG
 
@@ -37,7 +42,7 @@ fi
 
 # For MIUI Build (Copy Modules)
 # Credit Adek Maulana <adek@techdro.id>
-cd $KERNEL_DIR && rm -rf $AK3_DIR/zImage && rm -rf $AK3_DIR/modules/vendor/lib/modules/*;
+cd $KERNEL_DIR && rm -rf $AK3_DIR/zImage && rm -rf $AK3_DIR/modules/vendor/lib/modules/*.ko;
 STRIP="${HOME}/gcc4/bin/$(echo "$(find "${HOME}/gcc4/bin" -type f -name "aarch64-*-gcc")" | awk -F '/' '{print $NF}' |\
             sed -e 's/gcc/strip/')"
 for MODULES in $(find "${OUTDIR}" -name '*.ko'); do
@@ -54,7 +59,7 @@ cd $AK3_DIR
 cp $KERN_IMG $AK3_DIR/zImage
 
 zip -r9 LOLZ-V$LOLZ_VERSION-olive-$BUILD_DATE.zip * -x README.md LOLZ-V$LOLZ_VERSION-olive-$BUILD_DATE.zip;
-cd $KERNEL_DIR && rm -rf $AK3_DIR/zImage && rm -rf $AK3_DIR/modules/vendor/lib/modules/*;
+cd $KERNEL_DIR && rm -rf $AK3_DIR/zImage && rm -rf $AK3_DIR/modules/vendor/lib/modules/*.ko;
 
     if [ ! -d "$RELEASE_DIR" ]; then
         mkdir -p $RELEASE_DIR
