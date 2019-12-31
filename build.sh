@@ -41,6 +41,12 @@ cd $KERNEL_DIR && rm -rf $AK3_DIR/zImage && rm -rf $AK3_DIR/modules/vendor/lib/m
 STRIP="${HOME}/gcc4/bin/$(echo "$(find "${HOME}/gcc4/bin" -type f -name "aarch64-*-gcc")" | awk -F '/' '{print $NF}' |\
             sed -e 's/gcc/strip/')"
 for MODULES in $(find "${OUTDIR}" -name '*.ko'); do
+    "${STRIP}" --strip-unneeded --strip-debug "${MODULES}"
+    "${OUTDIR}"/scripts/sign-file sha512 \
+            "${OUTDIR}/certs/signing_key.pem" \
+            "${OUTDIR}/certs/signing_key.x509" \
+            "${MODULES}"
+
     find "${OUTDIR}" -name '*.ko' -exec cp {} "${VENDOR_MODULEDIR}" \;
 done
 
