@@ -1388,7 +1388,6 @@ static int mmc_sd_resume(struct mmc_host *host)
 			mmc_card_set_removed(host->card);
 		}
 	}
-
 	if (err != -ENOMEDIUM) {
 		pm_runtime_set_active(&host->card->dev);
 		pm_runtime_mark_last_busy(&host->card->dev);
@@ -1396,7 +1395,6 @@ static int mmc_sd_resume(struct mmc_host *host)
 	}
 
 	MMC_TRACE(host, "%s: Exit err: %d\n", __func__, err);
-
 	return err;
 }
 
