@@ -8,25 +8,25 @@
 # Main environtment
 KERNEL_DIR=$PWD
 BUILD_DATE="$(date +"%Y%m%d")"
-LOLZ_VERSION="2"
+KERNEL_VERSION="XI"
 OUTDIR=$KERNEL_DIR/out
 RELEASE_DIR=$KERNEL_DIR/release
-AK3_DIR=$KERNEL_DIR/olive_anykernel
+AK3_DIR=$KERNEL_DIR/pine_anykernel
 KERN_IMG=$OUTDIR/arch/arm64/boot/Image.gz-dtb
 VENDOR_MODULEDIR=$AK3_DIR/modules/vendor/lib/modules
-CONFIG=lolz_olive_defconfig
+CONFIG=legendary_pine_defconfig
 PATH="${HOME}/clang/bin:${HOME}/gcc4/bin:${PATH}"
 
 # Download our Anykernel for olive
 rm -rf $AK3_DIR
-git clone https://github.com/Jprimero15/olive_anykernel -b master $AK3_DIR
+git clone https://github.com/AndroJr7/pine_anykernel -b master $AK3_DIR
 rm -rf $AK3_DIR/.git
 
 # Build start
 make O=$OUTDIR ARCH=arm64 $CONFIG
 
-# Update Lolz Version here
-sed -i "s;Lolz-Kernel-V1; Lolz-Kernel-V$LOLZ_VERSION;" $OUTDIR/.config;
+# Update kernel Version here
+sed -i "s;Legendary-Kernel-V1; Legendary-Kernel-V$KERNEL_VERSION;" $OUTDIR/.config;
 
 make -j$(nproc --all) O=$OUTDIR \
  		      ARCH=arm64 \
@@ -41,7 +41,7 @@ if ! [ -a $KERN_IMG ]; then
 fi
 
 # For MIUI Build (Copy Modules)
-# Credit Adek Maulana <adek@techdro.id>
+# 
 cd $KERNEL_DIR && rm -rf $AK3_DIR/zImage && rm -rf $AK3_DIR/modules/vendor/lib/modules/*.ko;
 STRIP="${HOME}/gcc4/bin/$(echo "$(find "${HOME}/gcc4/bin" -type f -name "aarch64-*-gcc")" | awk -F '/' '{print $NF}' |\
             sed -e 's/gcc/strip/')"
@@ -58,15 +58,15 @@ done
 cd $AK3_DIR
 cp $KERN_IMG $AK3_DIR/zImage
 
-zip -r9 LOLZ-V$LOLZ_VERSION-olive-$BUILD_DATE.zip * -x README.md LOLZ-V$LOLZ_VERSION-olive-$BUILD_DATE.zip;
+zip -r9 Legendary-V$KERNEL_VERSION-pine-$BUILD_DATE.zip * -x README.md Legendary-V$KERNEL_VERSION-pine-$BUILD_DATE.zip;
 cd $KERNEL_DIR && rm -rf $AK3_DIR/zImage && rm -rf $AK3_DIR/modules/vendor/lib/modules/*.ko;
 
     if [ ! -d "$RELEASE_DIR" ]; then
         mkdir -p $RELEASE_DIR
     fi;
 
-# Final Product boi
-mv $AK3_DIR/LOLZ-V$LOLZ_VERSION-olive-$BUILD_DATE.zip $RELEASE_DIR;
+# Final Product for pine
+mv $AK3_DIR/Legendary-V$KERNEL_VERSION-pine-$BUILD_DATE.zip $RELEASE_DIR;
 
 echo "Flashable zip generated under /release folder.";
 cd $KERNEL_DIR;
