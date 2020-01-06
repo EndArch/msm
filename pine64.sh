@@ -22,7 +22,7 @@ J="-j32"
 make $J clean mrproper
 
 # Get Toolchain
-Toolchain=$KERNEL_DIR/../Toolchain
+Toolchain=$KERNEL_DIR/gcc4
 
 
  #android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm64/aarch64-linux-android-4.9 -b android-9.0.0_r51 $Toolchain
