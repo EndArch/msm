@@ -24,10 +24,10 @@ make $J clean mrproper
 # Get Toolchain
 Toolchain=$KERNEL_DIR/../Toolchain
 
-function TC() {
-	git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm64/aarch64-linux-android-4.9 -b android-9.0.0_r51 $Toolchain
-fi
-}
+
+ #android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm64/aarch64-linux-android-4.9 -b android-9.0.0_r51 $Toolchain
+
+
 
 # Modify the following variable if you want to build
 export CROSS_COMPILE=$Toolchain/bin/aarch64-linux-android-
