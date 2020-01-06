@@ -15,7 +15,7 @@ AK3_DIR=$KERNEL_DIR/pine_anykernel
 KERN_IMG=$OUTDIR/arch/arm64/boot/Image.gz-dtb
 VENDOR_MODULEDIR=$AK3_DIR/modules/vendor/lib/modules
 CONFIG=legendary_pine_defconfig
-PATH="${HOME}/clang/bin:${HOME}/gcc4/bin:${PATH}"
+PATH=$KERNEL_DIR/gcc4/bin
 
 # Download our Anykernel for olive
 rm -rf $AK3_DIR
