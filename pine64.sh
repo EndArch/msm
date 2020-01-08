@@ -25,7 +25,6 @@ make $J clean mrproper
 Toolchain=$KERNEL_DIR/gcc4
 
 
- #android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm64/aarch64-linux-android-4.9 -b android-9.0.0_r51 $Toolchain
 
 
 
@@ -67,7 +66,7 @@ if [[ $( ls ${KERNEL_DIR}/arch/arm64/boot/Image.gz-dtb 2>/dev/null | wc -l ) != 
 	echo "Making Zip"
 	rm $BUILD_DIR/*.zip
 	rm $BUILD_DIR/Image.gz-dtb
-	cp $KERNEL_DIR/arch/arm64/boot/zImage-dtb $BUILD_DIR/Image.gz-dtb
+	cp $KERNEL_DIR/arch/arm64/boot/Image.gz-dtb $BUILD_DIR/Image.gz-dtb
 	cd $BUILD_DIR
 	zip -r ${ZIP_NAME}.zip *
 	cd $KERNEL_DIR
@@ -84,7 +83,7 @@ clean)
 make ARCH=arm64 $J clean mrproper
 ;;
 *)
-TC
+
 compile_kernel
 ;;
 esac
