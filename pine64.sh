@@ -36,9 +36,9 @@ export KBUILD_BUILD_USER="Priyabrat1717"
 export KBUILD_BUILD_HOST="Neutrino"
 export USE_CCACHE=1
 BUILD_DIR=$KERNEL_DIR/pine_anykernel
-VERSION=""
+VERSION="VII"
 DATE=$(date -u +%Y%m%d-%H%M)
-ZIP_NAME=Legendary _kernel-$DEVICE-$VERSION-$DATE
+ZIP_NAME=Legendary_kernel-$DEVICE-$VERSION-$DATE
 
 compile_kernel ()
 {
