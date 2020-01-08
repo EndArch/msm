@@ -1,11 +1,8 @@
-#ifndef __AW87519_H__
-#define __AW87519_H__
+#ifndef __AW20036_H__
+#define __AW20036_H__
 
 
 unsigned char aw87519_spk_cfg_default[]={
-//    0x00,0x59,  CHIPID REG
-    0x69,0x80,
-    0x69,0xB7,
     0x01,0xF0,
     0x02,0x09,
     0x03,0xE8,
@@ -28,9 +25,6 @@ unsigned char aw87519_spk_cfg_default[]={
 };
 
 unsigned char aw87519_rcv_cfg_default[]={
-//    0x00,0x59,  //CHIPID REG
-    0x69,0x80,
-    0x69,0xB7,
     0x01,0xF8,
     0x02,0x09,
     0x03,0xC8,
@@ -89,6 +83,8 @@ struct aw87519 {
     unsigned char hwen_flag;
     unsigned char spk_cfg_update_flag;
     unsigned char rcv_cfg_update_flag;
+    unsigned char spk_cfg_data[sizeof(aw87519_spk_cfg_default)/sizeof(char)];
+    unsigned char rcv_cfg_data[sizeof(aw87519_rcv_cfg_default)/sizeof(char)];
     struct hrtimer cfg_timer;
     struct mutex cfg_lock;
     struct work_struct cfg_work;

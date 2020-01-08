@@ -36,10 +36,6 @@
 
 #include <linux/switch.h>
 
-#define CAM_HS_IMPED 45000
-#define EUR_HS_LOW 5000
-#define EUR_HS_HIGH 15000
-
 static struct switch_dev accdet_data;
 
 void wcd_mbhc_jack_report(struct wcd_mbhc *mbhc,
@@ -723,44 +719,6 @@ void wcd_mbhc_report_plug(struct wcd_mbhc *mbhc, int insertion,
 				}
 				pr_debug("%s: Marking jack type as SND_JACK_LINEOUT\n",
 				__func__);
-			}
-
-			wcd_mbhc_set_and_turnoff_hph_padac(mbhc);
-			if ((mbhc->zl > CAM_HS_IMPED &&
-				mbhc->zl < MAX_IMPED) &&
-				(mbhc->zr > CAM_HS_IMPED &&
-				mbhc->zr < MAX_IMPED) &&
-				(jack_type == SND_JACK_UNSUPPORTED)) {
-					jack_type = SND_JACK_HEADSET;
-					mbhc->current_plug = MBHC_PLUG_TYPE_HEADSET;
-					mbhc->jiffies_atreport = jiffies;
-					if (mbhc->hph_status) {
-						mbhc->hph_status &= ~(SND_JACK_HEADSET |
-						SND_JACK_LINEOUT |
-						SND_JACK_UNSUPPORTED);
-						wcd_mbhc_jack_report(mbhc,
-						&mbhc->headset_jack,
-						mbhc->hph_status,
-						WCD_MBHC_JACK_MASK);
-				}
-			}
-
-			if ((mbhc->zl > EUR_HS_LOW &&
-				mbhc->zl < EUR_HS_HIGH) &&
-				(mbhc->zr > EUR_HS_LOW &&
-				mbhc->zr < EUR_HS_HIGH) &&
-				(jack_type == SND_JACK_UNSUPPORTED)) {
-					pr_info(" EUR HS !");
-					jack_type = SND_JACK_HEADPHONE;
-					mbhc->current_plug = MBHC_PLUG_TYPE_HEADPHONE;
-					if (mbhc->hph_status) {
-						mbhc->hph_status &= ~(MBHC_PLUG_TYPE_HEADPHONE |
-						SND_JACK_UNSUPPORTED);
-						wcd_mbhc_jack_report(mbhc,
-						&mbhc->headset_jack,
-						mbhc->hph_status,
-						WCD_MBHC_JACK_MASK);
-				}
 			}
 		}
 

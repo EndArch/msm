@@ -1,7 +1,7 @@
 /*
  * aw87519_audio.c   aw87519 pa module
  *
- * Version: v1.0.3
+ * Version: v1.0.1
  *
  * Copyright (c) 2019 AWINIC Technology CO., LTD
  * Copyright (C) 2019 XiaoMi, Inc.
@@ -37,13 +37,13 @@
 #include <linux/timer.h>
 #include <linux/workqueue.h>
 #include <linux/hrtimer.h>
-#include <aw87519_audio.h>
+#include "aw87519_audio.h"
 
 /*******************************************************************************
  * aw87519 marco
  ******************************************************************************/
 #define AW87519_I2C_NAME    "AW87519_PA"
-#define AW87519_DRIVER_VERSION  "v1.0.3"
+#define AW87519_DRIVER_VERSION  "v1.0.1"
 
 /*******************************************************************************
  * aw87519 functions
@@ -150,8 +150,6 @@ unsigned char aw87519_audio_receiver(void)
 {
     unsigned int i;
     unsigned int length;
-
-    pr_info("%s enter\n", __func__);
     if(NULL == aw87519) {
         return 2;
     }
@@ -160,6 +158,9 @@ unsigned char aw87519_audio_receiver(void)
         aw87519_hw_on(aw87519);
     }
 
+    aw87519_i2c_write(aw87519,0x69,0x80);
+    aw87519_i2c_write(aw87519,0x69,0xB7);
+
     length = sizeof(aw87519_spk_cfg_default)/sizeof(char);
     if(aw87519->rcv_cfg_update_flag==0){ /*update array data*/
         for(i=0;i<length;i=i+2){
@@ -167,8 +168,8 @@ unsigned char aw87519_audio_receiver(void)
         }
     }
     if(aw87519->rcv_cfg_update_flag==1){  /*update bin data*/
-        for(i=0;i<aw87519_rcv_cnt->len;i=i+2){
-            aw87519_i2c_write(aw87519, aw87519_rcv_cnt->data[i], aw87519_rcv_cnt->data[i+1]);
+        for(i=0;i<length;i=i+2){
+            aw87519_i2c_write(aw87519, aw87519->rcv_cfg_data[i], aw87519->rcv_cfg_data[i+1]);
         }
     }
 
@@ -179,9 +180,6 @@ unsigned char aw87519_audio_speaker(void)
 {
     unsigned int i;
     unsigned int length;
-
-    pr_info("%s enter\n", __func__);
-
     if(NULL == aw87519) {
         return 2;
     }
@@ -189,6 +187,8 @@ unsigned char aw87519_audio_speaker(void)
     if(!aw87519->hwen_flag) {
         aw87519_hw_on(aw87519);
     }
+    aw87519_i2c_write(aw87519,0x69,0x80);
+    aw87519_i2c_write(aw87519,0x69,0xB7);
 
     length = sizeof(aw87519_spk_cfg_default)/sizeof(char);
     if(aw87519->spk_cfg_update_flag==0){ /*send array data*/
@@ -197,8 +197,8 @@ unsigned char aw87519_audio_speaker(void)
         }
     }
     if(aw87519->spk_cfg_update_flag==1){  /*send bin data*/
-        for(i=0;i<aw87519_spk_cnt->len;i=i+2){
-            aw87519_i2c_write(aw87519, aw87519_spk_cnt->data[i], aw87519_spk_cnt->data[i+1]);
+        for(i=0;i<length;i=i+2){
+            aw87519_i2c_write(aw87519, aw87519->spk_cfg_data[i], aw87519->spk_cfg_data[i+1]);
         }
     }
 
@@ -237,10 +237,25 @@ unsigned char aw87519_audio_off(void)
       pr_info("%s: loaded %s - size: %zu\n", __func__, aw87519_rcv_name,
                       cont ? cont->size : 0);
 
-      for(i=0; i<cont->size; i=i+2) {
-          pr_info("%s: addr:0x%04x, data:0x%02x\n", __func__, *(cont->data+i), *(cont->data+i+1));
+      for(i=0; i<cont->size; i++) {
+          pr_info("%s: addr:0x%04x, data:0x%02x\n", __func__, i, *(cont->data+i));
       }
 
+
+      /* check sum */
+      /*
+      for(i=2; i<cont->size; i++) {
+          check_sum += cont->data[i];
+      }
+
+      if(check_sum != (unsigned short)((cont->data[0]<<8)|(cont->data[1]))) {
+          pr_err("%s: check sum err: check_sum=0x%04x\n", __func__, check_sum);
+          return;
+      } else {
+          pr_info("%s: check sum pass : 0x%04x\n", __func__, check_sum);
+          aw87519->ram.check_sum = check_sum;
+      }
+     */
       /* aw87519 ram update */
       aw87519_rcv_cnt = kzalloc(cont->size+sizeof(int), GFP_KERNEL);
       if (!aw87519_rcv_cnt) {
@@ -249,8 +264,12 @@ unsigned char aw87519_audio_off(void)
           return;
       }
       aw87519_rcv_cnt->len = cont->size;
-      memcpy(aw87519_rcv_cnt->data, cont->data, cont->size);
+      for(i=0; i<aw87519_rcv_cnt->len; i++) {
+          aw87519->rcv_cfg_data[i] = *(cont->data+i);
+      }
       release_firmware(cont);
+
+      kfree(aw87519_rcv_cnt);
 
       printk("%s: fw update complete\n", __func__);
  }
@@ -278,10 +297,24 @@ unsigned char aw87519_audio_off(void)
    pr_info("%s: loaded %s - size: %zu\n", __func__, aw87519_spk_name,
                    cont ? cont->size : 0);
 
-   for(i=0; i<cont->size; i=i+2) {
-       pr_info("%s: addr:0x%04x, data:0x%02x\n", __func__, *(cont->data+i), *(cont->data+i+1));
+   for(i=0; i<cont->size; i++) {
+       pr_info("%s: addr:0x%04x, data:0x%02x\n", __func__, i, *(cont->data+i));
    }
 
+   /* check sum */
+/*
+   for(i=2; i<cont->size; i++) {
+       check_sum += cont->data[i];
+   }
+
+   if(check_sum != (unsigned short)((cont->data[0]<<8)|(cont->data[1]))) {
+       pr_err("%s: check sum err: check_sum=0x%04x\n", __func__, check_sum);
+       return;
+   } else {
+       pr_info("%s: check sum pass : 0x%04x\n", __func__, check_sum);
+       aw87519->ram.check_sum = check_sum;
+   }
+*/
    /* aw87519 ram update */
    aw87519_spk_cnt = kzalloc(cont->size+sizeof(int), GFP_KERNEL);
    if (!aw87519_spk_cnt) {
@@ -290,8 +323,12 @@ unsigned char aw87519_audio_off(void)
        return;
    }
    aw87519_spk_cnt->len = cont->size;
-   memcpy(aw87519_spk_cnt->data, cont->data, cont->size);
+   for(i=0; i<aw87519_spk_cnt->len; i++) {
+       aw87519->spk_cfg_data[i] = *(cont->data+i);
+   }
    release_firmware(cont);
+
+   kfree(aw87519_spk_cnt);
 
    printk("%s: fw update complete\n", __func__);
 
@@ -337,11 +374,7 @@ static ssize_t aw87519_get_reg(struct device* dev,struct device_attribute *attr,
     ssize_t len = 0;
     unsigned int i = 0;
     unsigned char reg_val = 0;
-    for(i = 0; i < AW87519_REG_MAX; i++) {
-        aw87519_i2c_read(aw87519, i, &reg_val);
-        len += snprintf(buf+len, PAGE_SIZE-len, "reg:0x%02x=0x%02x\n", i, reg_val);
-    }
-     for(i = 0x60; i <= 0x69; i++) {
+    for(i = 0; i < AW87519_REG_MAX; i ++) {
         aw87519_i2c_read(aw87519, i, &reg_val);
         len += snprintf(buf+len, PAGE_SIZE-len, "reg:0x%02x=0x%02x\n", i, reg_val);
     }
@@ -572,8 +605,8 @@ static int aw87519_i2c_probe(struct i2c_client *client, const struct i2c_device_
     }
 
     /* aw87519 cfg update */
-    aw87519->spk_cfg_update_flag = 1;
-    aw87519->rcv_cfg_update_flag = 1;
+    aw87519->spk_cfg_update_flag = 0;
+    aw87519->rcv_cfg_update_flag = 0;
     aw87519_cfg_init(aw87519);
 
     /* aw87519 hardware off */

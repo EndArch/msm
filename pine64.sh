@@ -36,7 +36,7 @@ export SUBARCH=arm64
 export KBUILD_BUILD_USER="Priyabrat1717"
 export KBUILD_BUILD_HOST="Neutrino"
 export USE_CCACHE=1
-BUILD_DIR=$KERNEL_DIR/Anykernel_MIUI
+BUILD_DIR=$KERNEL_DIR/pine_anykernel
 VERSION=""
 DATE=$(date -u +%Y%m%d-%H%M)
 ZIP_NAME=Legendary _kernel-$DEVICE-$VERSION-$DATE
@@ -48,7 +48,7 @@ echo "             Compiling Legendary ™ kernel        "
 echo -e "****************************************************"
 echo -e "$nocol"
 rm -f $KERN_IMG
-make pine_legendary_defconfig
+make legendary_pine_defconfig
 make $J
 echo -e "$nocol"
 if ! [ -a $KERN_IMG ];

@@ -185,14 +185,9 @@ KBUILD_CPPFLAGS += $(CDEFINES)
 # AUDIO driver.  Note that we must use EXTRA_CFLAGS here so that it
 # will override the kernel settings.
 ifeq ($(call cc-option-yn, -Wmaybe-uninitialized),y)
-EXTRA_CFLAGS += $(call cc-disable-warning,maybe-uninitialized)
+EXTRA_CFLAGS += -Wmaybe-uninitialized
 endif
 #EXTRA_CFLAGS += -Wmissing-prototypes
-
-# FIXME: disable this clang warnings
-ifeq ($(cc-name),clang)
-EXTRA_CFLAGS += $(call cc-disable-warning,fortify-source,)
-endif
 
 ifeq ($(call cc-option-yn, -Wheader-guard),y)
 EXTRA_CFLAGS += -Wheader-guard

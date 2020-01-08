@@ -306,6 +306,9 @@ HOSTCXX      = g++
 HOSTCFLAGS   := -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89
 HOSTCXXFLAGS = -O2
 
+ccflags-y += -D__CHECK_ENDIAN__
+CFLAGS_trace.o := -I$(src)
+
 # Decide whether to build built-in, modular, or both.
 # Normally, just do built-in.
 
