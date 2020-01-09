@@ -1,5 +1,4 @@
-/*
- * drivers/input/touchscreen/gt1x.c
+/* drivers/input/touchscreen/gt1x.c
  *
  * 2010 - 2014 Goodix Technology.
  *
@@ -166,6 +165,7 @@ u32 gt1x_get_charger_status(void)
 static irqreturn_t gt1x_ts_irq_handler(int irq, void *dev_id)
 {
 	unsigned long irqflags;
+
 	spin_lock_irqsave(&irq_lock, irqflags);
 	if (!irq_disabled) {
 		irq_disabled = 1;
@@ -201,7 +201,6 @@ void gt1x_touch_down(s32 x, s32 y, s32 size, s32 id)
 	input_mt_sync(input_dev);
 #endif
 }
-
 void gt1x_touch_up(s32 id)
 {
 #ifdef CONFIG_GTP_TYPE_B_PROTOCOL
@@ -211,7 +210,6 @@ void gt1x_touch_up(s32 id)
 	input_mt_sync(input_dev);
 #endif
 }
-
 static irqreturn_t gt1x_ts_work_thread(int irq, void *data)
 {
 	u8 point_data[11] = { 0 };
@@ -285,7 +283,6 @@ exit_eint:
 	gt1x_irq_enable();
 	return IRQ_HANDLED;
 }
-
 #ifdef CONFIG_OF
 
 static int gt1x_parse_dt(struct device *dev)
@@ -316,7 +313,6 @@ static int gt1x_parse_dt(struct device *dev)
 
 	return 0;
 }
-
 int gt1x_power_switch(int on)
 {
 
@@ -333,14 +329,10 @@ int gt1x_power_switch(int on)
 		GTP_DEBUG("GTP power off.");
 		ret = regulator_disable(vdd_ana);
 	}
-
-
 	return ret;
 
 }
 #endif
-
-
 static int goodix_pinctrl_init(struct i2c_client *client)
 {
 	int ret = 0;
@@ -451,7 +443,6 @@ static void gt1x_release_resource(void)
 		input_dev = NULL;
 	}
 }
-
 static s32 gt1x_request_gpio(void)
 {
 	s32 ret = 0;
@@ -474,7 +465,6 @@ static s32 gt1x_request_gpio(void)
 	GTP_GPIO_AS_INPUT(GTP_RST_PORT);
 	return ret;
 }
-
 static s32 gt1x_request_irq(void)
 {
 	s32 ret = -1;
@@ -496,7 +486,6 @@ static s32 gt1x_request_irq(void)
 		return 0;
 	}
 }
-
 static s8 gt1x_request_input_dev(void)
 {
 	s8 ret = -1;
@@ -792,12 +781,12 @@ static int gt1x_ts_probe(struct i2c_client *client, const struct i2c_device_id *
 #else
 #error [GOODIX]only support devicetree platform
 #endif
+#ifndef CONFIG_GTP_INT_SEL_SYNC
+#endif
 
 	ret  = goodix_pinctrl_init(client);
 	if (ret < 0)
 		GTP_ERROR("Init pinctrl states failed.");
-
-
 
 	if (!ret && gt_pinctrl.ts_pinctrl) {
 		ret = pinctrl_select_state(gt_pinctrl.ts_pinctrl, gt_pinctrl.int_out_low);
@@ -810,23 +799,17 @@ static int gt1x_ts_probe(struct i2c_client *client, const struct i2c_device_id *
 		}
 		msleep(10);
 	}
-
-
 	//* gpio resource */
 	ret = gt1x_request_gpio();
 	if (ret < 0) {
 		GTP_ERROR("GTP request IO port failed.");
 		goto exit_clean;
 	}
-
-
 	ret = gt1x_power_switch(SWITCH_ON);
 	if (ret < 0) {
 		GTP_ERROR("Power on failed");
 		goto exit_clean;
 	}
-
-
 	ret = gt1x_reset_guitar();
 	if (ret != 0) {
 		ret = gt1x_power_switch(SWITCH_OFF);
@@ -841,8 +824,6 @@ static int gt1x_ts_probe(struct i2c_client *client, const struct i2c_device_id *
 			goto exit_clean;
 		}
 	}
-
-
 
 	gt1x_init();
 
@@ -961,18 +942,14 @@ static int gtp_fb_notifier_callback(struct notifier_block *noti, unsigned long e
 
 	return 0;
 }
-
 static int gt1x_pm_suspend(struct device *dev)
 {
 	return gt1x_suspend();
 }
-
 static int gt1x_pm_resume(struct device *dev)
 {
 	return gt1x_resume();
 }
-
-
 static const struct dev_pm_ops gt1x_ts_pm_ops = {
 	.suspend = gt1x_pm_suspend,
 	.resume = gt1x_pm_resume,
@@ -1000,8 +977,6 @@ static struct early_suspend gt1x_early_suspend = {
 	.resume = gt1x_ts_late_resume,
 };
 #endif
-
-
 static int gt1x_register_powermanger(void)
 {
 #if   defined(CONFIG_FB)

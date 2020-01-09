@@ -13,8 +13,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
- */ Version: 1.6
-
+ * Version: 1.6
+ */
 
 #ifndef _GT1X_GENERIC_H_
 #define _GT1X_GENERIC_H_

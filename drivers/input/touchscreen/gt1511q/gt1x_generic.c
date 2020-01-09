@@ -450,7 +450,6 @@ s32 _do_i2c_write(struct i2c_msg *msg, u16 addr, u8 *buffer, s32 len)
 	return 0;
 }
 
-
 s32 gt1x_i2c_read_dbl_check(u16 addr, u8 *buffer, s32 len)
 {
 	u8 buf[16] = { 0 };
@@ -483,6 +482,7 @@ s32 gt1x_i2c_read_dbl_check(u16 addr, u8 *buffer, s32 len)
 	GTP_ERROR("i2c read 0x%04X, %d bytes, double check failed!", addr, len);
 	return VALID;
 }
+
 s32 gt1x_get_info(void)
 {
 	u8 opr_buf[4] = { 0 };
@@ -534,8 +534,6 @@ s32 gt1x_send_cfg(u8 *config, int cfg_len)
 
 	if (config[GTP_REG_EXT_CFG_FLAG - GTP_REG_CONFIG_DATA] & 0x40) {
 		int total_len = GTP_CONFIG_EXT_LENGTH + GTP_CONFIG_ORG_LENGTH;
-
-
 		config[GTP_CONFIG_ORG_LENGTH] |= 0x01;
 		GTP_DEBUG("ext_cfg, debug info:%X", config[GTP_CONFIG_ORG_LENGTH]);
 
@@ -666,6 +664,7 @@ s32 gt1x_init_panel(void)
 		GTP_ERROR("Failed to obtain config data:%d", cfg_len);
 		return -EINVAL;
 	}
+
 	gt1x_config[0] &= 0x7F;
 
 #ifdef CONFIG_GTP_CUSTOM_CFG
@@ -697,6 +696,7 @@ s32 gt1x_init_panel(void)
 			cfg_len += GTP_CONFIG_EXT_LENGTH;
 		}
 #endif
+
 	if ((gt1x_abs_x_max == 0) && (gt1x_abs_y_max == 0)) {
 		gt1x_abs_x_max = (gt1x_config[RESOLUTION_LOC + 1] << 8) +
 				gt1x_config[RESOLUTION_LOC];
@@ -752,7 +752,6 @@ void gt1x_int_as_input(void)
 
 void gt1x_select_addr(void)
 {
-
 
 	pinctrl_select_state(gt_pinctrl.ts_pinctrl, gt_pinctrl.erst_output_low);
 	msleep(20);
@@ -902,7 +901,6 @@ s32 gt1x_reset_guitar(void)
 	return ret;
 }
 
-
 u8 global_patch_id;
 s32 gt1x_read_version(struct gt1x_version_info *ver_info)
 {
@@ -967,6 +965,7 @@ s32 gt1x_read_version(struct gt1x_version_info *ver_info)
 	}
 	return 0;
 }
+
 s32 gt1x_get_chip_type(void)
 {
 	u8 opr_buf[4] = { 0x00 };
@@ -1031,6 +1030,7 @@ static s32 gt1x_enter_sleep(void)
 	}
 #endif
 }
+
 static s32 gt1x_wakeup_sleep(void)
 {
 #ifndef CONFIG_GTP_POWER_CTRL_SLEEP
@@ -1067,8 +1067,6 @@ static s32 gt1x_wakeup_sleep(void)
 
 			gt1x_int_output(gt1x_wakeup_level);
 			msleep(5);
-
-			// Synchronize int IO */
 
 			gt1x_int_output(gt1x_wakeup_level);
 			msleep(50);
@@ -1107,7 +1105,6 @@ static s32 gt1x_wakeup_sleep(void)
 	}
 #endif
 }
-
 s32 gt1x_send_cmd(u8 cmd, u8 data)
 {
 	s32 ret;
@@ -1254,7 +1251,6 @@ s32 gt1x_touch_event_handler(u8 *data, struct input_dev *dev,
 			}
 		}
 
-
 	key_value = touch_data[1 + 8 * touch_num];
 
 	if ((touch_data[0] & 0x10) && key_value) {
@@ -1279,7 +1275,6 @@ s32 gt1x_touch_event_handler(u8 *data, struct input_dev *dev,
 
 #ifdef CONFIG_GTP_HAVE_STYLUS_KEY
 	if (CHK_BIT(cur_event, BIT_STYLUS_KEY) || CHK_BIT(pre_event, BIT_STYLUS_KEY)) {
-
 
 		u8 temp = (key_value & 0x40) ? 0x30 : key_value;
 		for (i = 4; i < 6; i++) {

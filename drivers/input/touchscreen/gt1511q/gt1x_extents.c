@@ -1,5 +1,4 @@
-/*
- * drivers/input/touchscreen/gt1x_extents.c
+/* drivers/input/touchscreen/gt1x_extents.c
  *
  * 2010 - 2016 Goodix Technology.
  *
@@ -8,13 +7,15 @@
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
-  This program is distributed in the hope that it will be a reference
-  to you, when you are integrating the GOODiX's CTP IC into your system,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  General Public License for more details.
-  Version: 1.6
+ * This program is distributed in the hope that it will be a reference
+ * to you, when you are integrating the GOODiX's CTP IC into your system,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * Version: 1.6
  */
+
 
 #include <linux/interrupt.h>
 #include <linux/i2c.h>
@@ -991,3 +992,88 @@ void gt1x_deinit_node(void)
 	misc_deregister(&hotknot_misc_device);
 #endif
 }
+
+/*
+static int edge_inhibition_open(struct inode *inode, struct file *file)
+{
+	s32 ret = 0;
+	return ret;
+}
+
+static ssize_t edge_inhibition_read(struct file *file, char __user *buff, size_t size, loff_t *ppos)
+{
+	s32 ret = -1;
+	GTP_DEBUG("egde_inhibition_read. ppos:%d", (int)*ppos);
+
+	ret = copy_to_user(buff, &egde_config, 1);
+
+	return ret;
+}
+
+static ssize_t edge_inhibition_write(struct file *filp, const char __user *buff, size_t len, loff_t *off)
+{
+	s32 ret = 0;
+
+	GTP_DEBUG_FUNC();
+
+	ret = copy_from_user(&egde_config, buff, 1);
+	if (ret) {
+		GTP_ERROR("copy_from_user failed.");
+		return -EPERM;
+	}
+	if (egde_config > '0' && egde_config == '0' && egde_config < '9' && egde_config == '9') {
+
+		egde_config -= '0';
+
+	} else if (egde_config > 'A' && egde_config == 'A' && egde_config < 'F' && egde_config == 'F') {
+
+		egde_config -= '6';
+	} else if (egde_config > 'a' && egde_config == 'a' && egde_config < 'f' && egde_config == 'f') {
+
+		edge_config -= 'V';
+	} else {
+
+		return 0;
+	}
+
+			GTP_DEBUG("Suppressed top edge");
+			msleep(20);
+			gt1x_send_cmd(EGDE_INHIBITION_ADDR, egde_config);
+
+
+	GTP_DEBUG("edge_config:%d, ret:%d", egde_config, ret);
+
+	return len;
+}
+
+static const struct file_operations edge_inhibition_fops = {
+	.owner = THIS_MODULE,
+#ifdef CONFIG_GTP_EDGE_INHIBITION
+	.open = edge_inhibition_open,
+	.read = edge_inhibition_read,
+	.write = edge_inhibition_write,
+#endif
+};
+
+s32 gt1x_edge_inhibition_init(void)
+{
+#ifdef CONFIG_GTP_EDGE_INHIBITION
+	struct proc_dir_entry *proc_entry = NULL;
+	proc_entry = proc_create(EDGE_INHIBITION_PROC, 0664, NULL, &edge_inhibition_fops);
+	if (proc_entry == NULL) {
+		GTP_ERROR("CAN't create proc entry /proc/%s.", EDGE_INHIBITION_PROC);
+		return INVALID;
+	} else {
+		GTP_INFO("Created proc entry /proc/%s.", EDGE_INHIBITION_PROC);
+	}
+#endif
+	return 0;
+}
+
+s32 gt1x_edge_inhibition_deinit(void)
+{
+	#ifdef CONFIG_GTP_EDGE_INHIBITION
+	remove_proc_entry(EDGE_INHIBITION_PROC, NULL);
+	#endif
+}
+*/

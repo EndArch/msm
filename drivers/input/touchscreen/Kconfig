@@ -1348,32 +1348,4 @@ config TOUCHSCREEN_GOODIX_GT1X
 
 source "drivers/input/touchscreen/gt1511q/Kconfig"
 
-config TOUCHSCREEN_ITK9881H
-	bool "ITK9881H Touchscreen"
-	default n
-	help
-	  Say Y here if you have ITK9881H Touchscreen.
-
-	  If unsure, say N.
-
-config TOUCHSCREEN_NT36525B
-	bool "NT36525B Touchscreen"
-	default n
-	help
-	  Say Y here if you have NT36525B Touchscreen.
-
-	  If unsure, say N.
-
-source "drivers/input/touchscreen/NT36525B/Kconfig"
-
-config TOUCHSCREEN_FT8006S
-	bool "FT8006S Touchscreen"
-	default n
-	help
-	  Say Y here if you have FT8006S Touchscreen.
-
-	  If unsure, say N.
-
-source "drivers/input/touchscreen/FT8006S/Kconfig"
-
 endif
