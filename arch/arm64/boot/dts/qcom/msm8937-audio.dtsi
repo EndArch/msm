@@ -52,7 +52,7 @@
 		qcom,msm-ext-pa = "primary";
 		qcom,msm-mclk-freq = <9600000>;
 		qcom,msm-mbhc-hphl-swh = <1>;
-		qcom,msm-mbhc-gnd-swh = <1>;
+		qcom,msm-mbhc-gnd-swh = <0>;
 		qcom,msm-hs-micbias-type = "internal";
 		qcom,msm-micbias1-ext-cap;
 
@@ -153,12 +153,6 @@
 		aw87329@58{
 			status = "okay";
 			compatible = "awinic,aw87329_pa";
-			reg = <0x58>;
-			reset-gpio = <&tlmm 125 0x01>;
-		};
-		aw87519@58{
-			status = "okay";
-			compatible = "awinic,aw87519";
 			reg = <0x58>;
 			reset-gpio = <&tlmm 125 0x01>;
 		};
